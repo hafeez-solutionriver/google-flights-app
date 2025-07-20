@@ -54,8 +54,18 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
+    
     <SafeAreaView style={styles.screenContainer}>
+      <AppText bold style={styles.headerTitle}>
+        Flight Booking App
+      </AppText>
+       <Image  
+          source={require("../../assets/images/airplane.png")}
+          style={{width:100,height:100,alignSelf:"center",marginBottom:70}}
+          resizeMode="contain"
+        />
       <Animated.View style={[styles.cardContainer, { opacity: fadeAnim }]}>
+       
           <View style={{ alignItems: "center", marginBottom: 15}}>
                  <Image
                    source={require("../../assets/images/login.png")} 
@@ -124,7 +134,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f2f2f2",
     justifyContent: "center",
-    paddingHorizontal: 20,
+    marginHorizontal:20,
+    marginBottom: 80,
   },
   cardContainer: {
     backgroundColor: "#fff",

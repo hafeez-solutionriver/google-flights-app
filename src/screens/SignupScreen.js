@@ -49,6 +49,15 @@ export default function SignupScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.screenContainer}>
+      <AppText bold style={{fontSize: 24,
+    textAlign: "center",marginTop:20}}>
+              Flight Booking App
+            </AppText>
+             <Image  
+                source={require("../../assets/images/airplane.png")}
+                style={{width:100,height:100,alignSelf:"center",marginBottom:70}}
+                resizeMode="contain"
+              />
       <Animated.View style={[styles.cardContainer, { opacity: fadeAnim }]}>
         <View style={styles.logoContainer}>
           <Image
@@ -140,7 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f2f2f2",
     justifyContent: "center",
-    paddingHorizontal: 20,
+    marginHorizontal:20
   },
   cardContainer: {
     backgroundColor: "#fff",
@@ -151,6 +160,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowRadius: 10,
     elevation: 5,
+    marginBottom:40
   },
   logoContainer: {
     alignItems: "center",
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   inputWrapper: {
     marginBottom: 15,
