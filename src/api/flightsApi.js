@@ -104,7 +104,7 @@ export const searchFlights = async ({
     const response = await axios.get(endpoint, {
       headers: API_HEADERS,
       params,
-      timeout: 45000, // timout for flight search
+      timeout: 100000000, // timout for flight search
     });
 
     console.log("Raw Flight API Response String:", JSON.stringify(response.data, null, 2));

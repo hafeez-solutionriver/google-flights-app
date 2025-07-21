@@ -19,7 +19,7 @@ import { searchAirport, searchFlights, validateFlightSearchParams } from "../api
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const { logout } = useContext(AuthContext);
 
   // States for each input field and suggestions
@@ -121,15 +121,18 @@ export default function HomeScreen() {
     // In order to Prevent double execution we need to check if loading is true
     if (loading) return;
 
-    const dateStr = travelDate.toISOString().split("T")[0];
     
-    const searchParams = {
-      originSkyId: selectedOrigin.skyId,
-      originEntityId: selectedOrigin.entityId,
-      destinationSkyId: selectedDestination.skyId,
-      destinationEntityId: selectedDestination.entityId,
-      date: dateStr,
-    };
+    
+   const searchParams = {
+  originSkyId: selectedOrigin?.navigation?.relevantFlightParams?.skyId || selectedOrigin.skyId,
+  originEntityId: selectedOrigin?.navigation?.relevantFlightParams?.entityId || selectedOrigin.entityId,
+  destinationSkyId: selectedDestination?.navigation?.relevantFlightParams?.skyId || selectedDestination.skyId,
+  destinationEntityId: selectedDestination?.navigation?.relevantFlightParams?.entityId || selectedDestination.entityId,
+  date: travelDate.toISOString().split("T")[0],
+};
+
+console.log("🛫 FINAL FLIGHT SEARCH PARAMS:", searchParams);
+
 
     //Validating parameters before sending
     const validation = validateFlightSearchParams(searchParams);
@@ -151,8 +154,12 @@ export default function HomeScreen() {
       // In this API call, we are assuming the 1 adult book sitting in economy class for simplicity
       const flightsResponse = await searchFlights(searchParams);
       
-      console.log("✅ Flight search response:", flightsResponse);
+      console.log("Flight search response:", flightsResponse);
 
+      if(flightsResponse.status === false) {
+                  console.log("No flights available for this route");
+        setFlights([]);
+      }
       // Handle different response cases
       if (flightsResponse?.error) {
         setApiError(flightsResponse.message || "Flight search failed");
@@ -161,9 +168,22 @@ export default function HomeScreen() {
         const foundFlights = flightsResponse.data.itineraries;
         console.log(`Found ${foundFlights.length} flights`);
         setFlights(foundFlights);
-        
+      
         if (foundFlights.length === 0) {
           console.log("No flights available for this route");
+        }
+        else{
+          // Navigate to FlightResultsScreen with the found flights and search parameters
+          
+         navigation.navigate("FlightResults", {
+  flights: foundFlights,
+  searchParams: {
+    ...searchParams, 
+    originCity: originCity,              
+    destinationCity: destinationCity,    
+    formattedDate: travelDate.toISOString(), 
+  }
+});
         }
       } else {
         console.log("Unexpected response structure:", flightsResponse);
@@ -194,8 +214,7 @@ export default function HomeScreen() {
       </AppText>
     </TouchableOpacity>
   );
-
- const renderFlightCard = ({ item, index }) => {
+const renderFlightCard = ({ item, index }) => {
   console.log(`Flight ${index + 1}:`, JSON.stringify(item, null, 2));
   
   // Enhanced price extraction with safety checks
@@ -221,10 +240,10 @@ export default function HomeScreen() {
     price = "N/A";
   }
 
-  // Enhancing segments extraction with safety checks
+  //Enhancing segments extraction with safety checks
   const segments = item.legs?.[0]?.segments || item.segments || [];
 
-  // Enhanced flight timing information with safety checks
+  //Enhanced flight timing information with safety checks
   const leg = item.legs?.[0] || item;
   let departure = '';
   let arrival = '';
@@ -234,7 +253,7 @@ export default function HomeScreen() {
   let stopCount = null;
   let airlineName = '';
 
-  // Safely extracting flight details
+  //Safely extracting flight details
   try {
    
     if (leg.departure) {
@@ -284,7 +303,7 @@ export default function HomeScreen() {
     console.log('Airline:', airlineName);
 
   } catch (error) {
-    // Log any errors encountered while extracting flight details
+   
     console.error('Error extracting flight details:', error);
   }
 
@@ -353,6 +372,7 @@ export default function HomeScreen() {
     </View>
   );
 };
+
 
   return (
     <View style={styles.container}>
